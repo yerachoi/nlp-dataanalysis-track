@@ -1,1 +1,1 @@
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/yerachoi/nlp-dataanalysis-track/master?urlpath=https%3A%2F%2Fgithub.com%2Fyerachoi%2Fnlp-dataanalysis-track%2Fblob%2Fmaster%2Fproject01_crawling_job%2Fproject_saramin_20200611.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/yerachoi/nlp-dataanalysis-track/master?filepath=project01_crawling_job%2Fproject_saramin_20200611.ipynb)
