@@ -1,9 +1,12 @@
 channels:
+  - damianavila82
   - conda-forge
 dependencies:
   - python
   - numpy
   - pandas
+  - matplotlib
+  - bokeh
   - rise
   - pip:
     - jupyter-contrib-nbextensions
