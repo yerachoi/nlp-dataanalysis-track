@@ -6,5 +6,9 @@ dependencies:
   - numpy
   - pandas
   - matplotlib
-  - jupyter_contrib_nbextensions
+  - bs4
   - rise
+  - Ipython
+  - pip
+  - pip:
+    - jupyter-contrib-nbextensions

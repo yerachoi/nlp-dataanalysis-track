@@ -1,1 +1,5 @@
-conda install -c conda-forge rise
+# Jupyter extensions
+jupyter contrib nbextension install --user
+jupyter nbextension install rise
+jupyter nbextension enable rise
+jupyter nbextension enable splitcell/splitcell
