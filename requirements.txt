@@ -9,4 +9,3 @@ numpy
 pandas
 requests
 rise
-widgetsnbextensions
