@@ -1,0 +1,17 @@
+#!/bin/bash
+
+jupyter contrib nbextension install --user
+jupyter nbextensions_configurator enable --user
+
+cat | perl -pe 'chomp if eof' > ~/.jupyter/nbconfig/common.json <<EOF
+{
+  "nbext_hide_incompat": false
+}
+EOF
+
+jupyter-nbextension install rise --py --sys-prefix
+jupyter-nbextension enable rise
+jupyter-nbextension enable splitcell/splitcell
+jupyter-nbextension enable hide_input/main
+jupyter-nbextension enable nbextensions_configurator/tree_tab/main
+jupyter-nbextension enable nbextensions_configurator/config_menu/main

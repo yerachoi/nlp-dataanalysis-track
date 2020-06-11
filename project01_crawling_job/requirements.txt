@@ -1,0 +1,12 @@
+bs4
+ipython
+ipython-genutils
+jupyter_contrib_nbextensions
+matplotlib
+nbconvert
+nbformat
+numpy
+pandas
+requests
+rise
+widgetsnbextensions
