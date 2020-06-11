@@ -1,14 +1,10 @@
 name: rise-environment
 channels:
-  - damianavila82
   - conda-forge
 dependencies:
   - python
   - numpy
   - pandas
   - matplotlib
-  - bokeh
+  - jupyter_contrib_nbextensions
   - rise
-  - pip:
-    - jupyter-contrib-nbextensions
-    - jupyter-nbextensions-configurator
