@@ -15,3 +15,5 @@ jupyter-nbextension enable splitcell/splitcell
 jupyter-nbextension enable hide_input/main
 jupyter-nbextension enable nbextensions_configurator/tree_tab/main
 jupyter-nbextension enable nbextensions_configurator/config_menu/main
+
+jupyter trust *.ipynb
