@@ -30,11 +30,10 @@ class NaverSpider(scrapy.Spider):
 
         sort="2" # 0: 관련도순 , 1: 최신순 , 2:오래된 순
         photo="0" # 0: 전체, 1: 포토기사 , 2: 동영상기사, 3: 지면기사, 4: 보도자료
-        press_num="1001"
+        press_num="1018" # 연합뉴스 : 1001, 이데일리 : 1018, 연합인포맥스 : 2227
 
-        start_date = pd.to_datetime('20050501', format='%Y%m%d') # 검색을 시작할 날짜
-        # end_date = pd.to_datetime('20050504', format='%Y%m%d') # 검색을 종료할 날짜
-        end_date = pd.to_datetime('20171231', format='%Y%m%d') # 검색을 종료할 날짜
+        start_date = pd.to_datetime('20060101', format='%Y%m%d') # 검색을 시작할 날짜
+        end_date = pd.to_datetime('20061231', format='%Y%m%d') # 검색을 종료할 날짜
         day_count = (end_date - start_date).days + 1
 
         for start_date_tmp in [start_date + timedelta(n) for n in range(0, day_count+1, 30)]:
@@ -50,7 +49,8 @@ class NaverSpider(scrapy.Spider):
     
     
     def parse(self, response):
-        for url,pub,dates,title in zip(response.css('a._sp_each_title::attr(href)').extract(),response.css('._sp_each_source::text').extract(),response.css('dd.txt_inline::text').re(r'\d{4}.\d{2}.\d{2}'),response.css('a._sp_each_title::attr(title)').extract()):
+        # for url,pub,dates,title in zip(response.css('a._sp_each_title::attr(href)').extract(),response.css('._sp_each_source::text').extract(),response.css('dd.txt_inline::text').re(r'\d{4}.\d{2}.\d{2}'),response.css('a._sp_each_title::attr(title)').extract()):
+        for url,pub,dates,title in zip(response.css('a._sp_each_url::attr(href)').extract(),response.css('._sp_each_source::text').extract(),response.css('dd.txt_inline::text').re(r'\d{4}.\d{2}.\d{2}'),response.css('a._sp_each_title::attr(title)').extract()):
             if 'zdnet' not in url:
                 # TCP timeout error 로 인하여 걸러냄
                 yield scrapy.Request(url, callback=self.parse_page, meta={'pub_date':dates,'publisher':pub})
@@ -63,7 +63,7 @@ class NaverSpider(scrapy.Spider):
 
     def parse_page(self,response):
         item = NaverScrapperItem()        
-        item['title']=response.css('head title::text').extract_first()
+        item['title']=response.css('head title::text').extract_first().replace(' : 네이버 뉴스', '')
         item['content']=get_content(response.text)
         dates=response.meta['pub_date'].replace('.','-')
         item['pub_date']=dates
