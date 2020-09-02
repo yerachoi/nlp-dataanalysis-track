@@ -1,0 +1,77 @@
+import datetime
+from datetime import date, timedelta
+import re
+
+import pandas as pd
+import scrapy
+from naver_scrapper.items import NaverScrapperItem
+from naver_scrapper.utils import get_content
+
+
+class NaverSpider(scrapy.Spider):
+    name = "naver"
+    
+    def start_requests(self):
+        base_url = "https://search.naver.com/search.naver?&where=news&query="
+        # mobile_url='https://m.search.naver.com/search.naver?where=m_news&query='
+        url_press_search='&mynews=1' #언론사별 검색 활성화
+        # url_press='&news_office_checked='
+
+        url_1="&sort="
+        url_2="&photo="
+        url_3='&nso=p:from'
+        url_4='to'
+        url_5='&refresh_start=1'
+
+        # url_press_search='&mynews=1'
+        url_press='&news_office_checked='
+
+        query="금리"
+
+        sort="2" # 0: 관련도순 , 1: 최신순 , 2:오래된 순
+        photo="0" # 0: 전체, 1: 포토기사 , 2: 동영상기사, 3: 지면기사, 4: 보도자료
+        press_num="1001"
+
+        start_date = pd.to_datetime('20050501', format='%Y%m%d') # 검색을 시작할 날짜
+        # end_date = pd.to_datetime('20050504', format='%Y%m%d') # 검색을 종료할 날짜
+        end_date = pd.to_datetime('20171231', format='%Y%m%d') # 검색을 종료할 날짜
+        day_count = (end_date - start_date).days + 1
+
+        for start_date_tmp in [start_date + timedelta(n) for n in range(0, day_count+1, 30)]:
+            end_date_tmp = min(start_date_tmp + timedelta(29), end_date)
+
+            sd = start_date_tmp.strftime('%Y%m%d') # 검색을 시작할 날짜
+            ed = end_date_tmp.strftime('%Y%m%d') # 검색을 종료할 날짜
+
+            # m_url=mobile_url+query+url_1+sort+url_2+photo+url_press_search+url_3+sd+url_4+ed+url_press+press_num
+            url = base_url+query+url_1+sort+url_2+photo+url_3+sd+url_4+ed+url_press_search
+
+            yield scrapy.Request(url=url, callback=self.parse, cookies={'news_office_checked':press_num}, meta={'dont_merge_cookies': False})
+    
+    
+    def parse(self, response):
+        for url,pub,dates,title in zip(response.css('a._sp_each_title::attr(href)').extract(),response.css('._sp_each_source::text').extract(),response.css('dd.txt_inline::text').re(r'\d{4}.\d{2}.\d{2}'),response.css('a._sp_each_title::attr(title)').extract()):
+            if 'zdnet' not in url:
+                # TCP timeout error 로 인하여 걸러냄
+                yield scrapy.Request(url, callback=self.parse_page, meta={'pub_date':dates,'publisher':pub})
+            
+            next_page = response.css('div.paging a.next::attr(href)').get()
+            
+            if next_page is not None:
+                yield response.follow(next_page, callback=self.parse)
+
+
+    def parse_page(self,response):
+        item = NaverScrapperItem()        
+        item['title']=response.css('head title::text').extract_first()
+        item['content']=get_content(response.text)
+        dates=response.meta['pub_date'].replace('.','-')
+        item['pub_date']=dates
+        item['url']=response.url
+        # item['publisher']=response.meta['publisher']
+        
+        yield item
+
+        # content = response.xpath(
+        #     "//div[@id='articleBodyContents']//text()").getall()
+        # self.log(content)
