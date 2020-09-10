@@ -34,7 +34,7 @@ class NaverScrapperPipeline:
         url = item['url']
         year = item['pub_date'][:4]
         if url not in self.url_to_exporter:
-            f = open('newsCrawl-yonhap-{year}.csv'.format(year=year), 'ab')
+            f = open('newsCrawl-edaily-{year}.csv'.format(year=year), 'ab')
             exporter = HeadlessCsvItemExporter(f)
             exporter.start_exporting()
             self.url_to_exporter[url] = exporter

@@ -30,10 +30,10 @@ class NaverSpider(scrapy.Spider):
 
         sort="2" # 0: 관련도순 , 1: 최신순 , 2:오래된 순
         photo="0" # 0: 전체, 1: 포토기사 , 2: 동영상기사, 3: 지면기사, 4: 보도자료
-        press_num="1001" # 연합뉴스 : 1001, 이데일리 : 1018, 연합인포맥스 : 2227
+        press_num="1018" # 연합뉴스 : 1001, 이데일리 : 1018, 연합인포맥스 : 2227
 
-        start_date = pd.to_datetime('20160101', format='%Y%m%d') # 검색을 시작할 날짜
-        end_date = pd.to_datetime('20161231', format='%Y%m%d') # 검색을 종료할 날짜
+        start_date = pd.to_datetime('20060101', format='%Y%m%d') # 검색을 시작할 날짜
+        end_date = pd.to_datetime('20061231', format='%Y%m%d') # 검색을 종료할 날짜
         day_count = (end_date - start_date).days + 1
 
         for start_date_tmp in [start_date + timedelta(n) for n in range(0, day_count+1, 30)]:
