@@ -13,20 +13,29 @@ class NaverScrapperSpiderMiddleware:
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the spider middleware does not modify the
     # passed objects.
+    """This middleware allows spiders to override the user_agent"""
+
+    def __init__(self, user_agent='Scrapy'):
+        self.user_agent = user_agent
 
     @classmethod
     def from_crawler(cls, crawler):
         # This method is used by Scrapy to create your spiders.
-        s = cls()
-        crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
-        return s
+        # s = cls()
+        # crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
+        # return s
+        o = cls(crawler.settings['USER_AGENT'])
+        crawler.signals.connect(o.spider_opened, signal=signals.spider_opened)
+        return o
 
     def process_spider_input(self, response, spider):
         # Called for each response that goes through the spider
         # middleware and into the spider.
 
         # Should return None or raise an exception.
-        return None
+        if self.user_agent:
+            request.headers.setdefault(b'User-Agent', self.user_agent)
+        # return None
 
     def process_spider_output(self, response, result, spider):
         # Called with the results returned from the Spider, after
@@ -53,6 +62,7 @@ class NaverScrapperSpiderMiddleware:
             yield r
 
     def spider_opened(self, spider):
+        self.user_agent = getattr(spider, 'user_agent', self.user_agent)
         spider.logger.info('Spider opened: %s' % spider.name)
 
 
@@ -60,13 +70,20 @@ class NaverScrapperDownloaderMiddleware:
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the downloader middleware does not modify the
     # passed objects.
+    """This middleware allows spiders to override the user_agent"""
+
+    def __init__(self, user_agent='Scrapy'):
+        self.user_agent = user_agent
 
     @classmethod
     def from_crawler(cls, crawler):
         # This method is used by Scrapy to create your spiders.
-        s = cls()
-        crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
-        return s
+        # s = cls()
+        # crawler.signals.connect(s.spider_opened, signal=signals.spider_opened)
+        # return s
+        o = cls(crawler.settings['USER_AGENT'])
+        crawler.signals.connect(o.spider_opened, signal=signals.spider_opened)
+        return o
 
     def process_request(self, request, spider):
         # Called for each request that goes through the downloader
@@ -78,7 +95,9 @@ class NaverScrapperDownloaderMiddleware:
         # - or return a Request object
         # - or raise IgnoreRequest: process_exception() methods of
         #   installed downloader middleware will be called
-        return None
+        if self.user_agent:
+            request.headers.setdefault(b'User-Agent', self.user_agent)
+        # return None
 
     def process_response(self, request, response, spider):
         # Called with the response returned from the downloader.
@@ -100,4 +119,5 @@ class NaverScrapperDownloaderMiddleware:
         pass
 
     def spider_opened(self, spider):
+        self.user_agent = getattr(spider, 'user_agent', self.user_agent)
         spider.logger.info('Spider opened: %s' % spider.name)

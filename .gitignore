@@ -2,3 +2,5 @@
 __pycache__/
 
 .DS_Store
+
+project02_crawling_bok/**/*.csv
